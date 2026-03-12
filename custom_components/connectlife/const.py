@@ -9,6 +9,7 @@ ATTR_KEY = "key"
 CONF_DEVICES = "devices"
 CONF_DEVELOPMENT_MODE = "development_mode"
 CONF_DISABLE_BEEP = "disable_beep"
+CONF_DISABLE_LED = "disable_led"
 CONF_TEST_SERVER_URL = "test_server_url"
 
 ACTION = "action"

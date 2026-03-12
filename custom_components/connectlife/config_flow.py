@@ -17,7 +17,7 @@ from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import callback
 from homeassistant.exceptions import HomeAssistantError
 
-from .const import CONF_DEVICES, CONF_DEVELOPMENT_MODE, CONF_DISABLE_BEEP, CONF_TEST_SERVER_URL, DOMAIN
+from .const import CONF_DEVICES, CONF_DEVELOPMENT_MODE, CONF_DISABLE_BEEP, CONF_DISABLE_LED, CONF_TEST_SERVER_URL, DOMAIN
 from connectlife.api import ConnectLifeApi
 
 _LOGGER = logging.getLogger(__name__)
@@ -131,15 +131,20 @@ class OptionsFlowHandler(OptionsFlow):
         if user_input is not None:
             data = self.config_entry.options.copy()
             data[CONF_DEVICES] = data[CONF_DEVICES].copy() if CONF_DEVICES in data else {}
-            data[CONF_DEVICES][self._device_id] = {CONF_DISABLE_BEEP: user_input[CONF_DISABLE_BEEP]}
+            data[CONF_DEVICES][self._device_id] = {
+                CONF_DISABLE_BEEP: user_input[CONF_DISABLE_BEEP],
+                CONF_DISABLE_LED: user_input[CONF_DISABLE_LED],
+            }
             return self.async_create_entry(title="", data=data)
 
         devices = self.config_entry.options.get(CONF_DEVICES, {})
         device = devices[self._device_id] if self._device_id in devices else {}
-        disable_beep = device[CONF_DISABLE_BEEP] if CONF_DISABLE_BEEP in device else False
+        disable_beep = device.get(CONF_DISABLE_BEEP, False)
+        disable_led = device.get(CONF_DISABLE_LED, False)
         schema = vol.Schema(
             {
                 vol.Optional(CONF_DISABLE_BEEP, default=disable_beep): bool,
+                vol.Optional(CONF_DISABLE_LED, default=disable_led): bool,
             }
         )
         return self.async_show_form(step_id="configure_device", data_schema=schema)

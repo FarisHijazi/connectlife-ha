@@ -57,7 +57,8 @@
       },
       "configure_device": {
         "data": {
-          "disable_beep": "Disable beep"
+          "disable_beep": "Disable beep",
+          "disable_led": "Disable LED display"
         },
         "description": "Configure a device."
       },

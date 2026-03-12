@@ -13,6 +13,7 @@ from connectlife.appliance import ConnectLifeAppliance
 from .const import (
     CONF_DEVICES,
     CONF_DISABLE_BEEP,
+    CONF_DISABLE_LED,
     DOMAIN,
 )
 from .coordinator import ConnectLifeCoordinator
@@ -24,6 +25,7 @@ class ConnectLifeEntity(CoordinatorEntity[ConnectLifeCoordinator]):
     _attr_has_entity_name = True
     _attr_unique_id: str
     _disable_beep = False
+    _disable_led = False
 
     def __init__(
             self,
@@ -51,6 +53,8 @@ class ConnectLifeEntity(CoordinatorEntity[ConnectLifeCoordinator]):
                 device = devices[self.device_id]
                 if CONF_DISABLE_BEEP in device:
                     self._disable_beep = device[CONF_DISABLE_BEEP]
+                if CONF_DISABLE_LED in device:
+                    self._disable_led = device[CONF_DISABLE_LED]
 
     @callback
     @abstractmethod
@@ -68,6 +72,8 @@ class ConnectLifeEntity(CoordinatorEntity[ConnectLifeCoordinator]):
             properties = command.copy()
         if self._disable_beep:
             command["t_beep"] = 0
+        if self._disable_led:
+            command["t_screen_display"] = 0
         await self.coordinator.async_update_device(self.device_id, command, properties)
 
     def to_translation_key(self, property_name: str) -> str:
